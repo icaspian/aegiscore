@@ -1,7 +1,9 @@
-import typer
-import json
 from datetime import datetime
-from aegiscore.core.logger import logger, console
+from pathlib import Path
+
+import typer
+
+from aegiscore.core.logger import console, logger
 
 report_app = typer.Typer(help="Reporting & Export Tools")
 
@@ -52,8 +54,10 @@ def generate_report(
 """
 
     try:
-        with open(output, 'w') as f:
-            f.write(markdown_content)
-        logger.info(f"[green][+] Professional report template generated at: {output}[/green]")
-    except Exception as e:
+        output_path = Path(output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(markdown_content, encoding="utf-8")
+        logger.info(f"[green][+] Report template generated at: {output}[/green]")
+    except OSError as e:
         logger.error(f"[!] Failed to write report: {e}")
+        raise typer.Exit(code=1)

@@ -15,7 +15,7 @@ echo -e "${CYAN}   ██╔══██║██╔══╝  ██║   █�
 echo -e "${CYAN}   ██║  ██║███████╗╚██████╔╝██║███████║╚██████╗╚██████╔╝██║  ██║███████╗${NC}"
 echo -e "${CYAN}   ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝${NC}"
 echo -e "${CYAN}=========================================================================${NC}"
-echo -e "${WHITE}[*] Initializing AegisCore Enterprise Installer for Linux/Termux...${NC}"
+echo -e "${WHITE}[*] Initializing AegisCore installer for Linux/Termux...${NC}"
 echo -e "${CYAN}=========================================================================${NC}\n"
 
 # Function to detect the package manager
@@ -51,24 +51,30 @@ fi
 
 $PYTHON_CMD -m venv venv
 
-if [ -f "venv/bin/activate" ]; then
-    source venv/bin/activate
-else
+if [ ! -f "venv/bin/activate" ]; then
     echo -e "${RED}[!] Failed to create virtual environment.${NC}"
+    exit 1
 fi
 
-echo -e "${YELLOW}[*] [3/4] Upgrading pip & installing dependencies...${NC}"
-pip install --upgrade pip -q
-pip install -r requirements.txt -q
+source venv/bin/activate
 
-echo -e "${YELLOW}[*] [4/4] Installing AegisCore package...${NC}"
-pip install -e . -q
+echo -e "${YELLOW}[*] [3/4] Upgrading pip & installing dependencies...${NC}"
+python -m pip install --upgrade pip -q
+
+echo -e "${YELLOW}[*] [4/4] Installing AegisCore with optional modules...${NC}"
+if ! python -m pip install -e ".[all]" -q; then
+    echo -e "${RED}[!] Installation failed. Check the output above.${NC}"
+    exit 1
+fi
+
+if ! aegis --version; then
+    echo -e "${RED}[!] The 'aegis' command is not available after install.${NC}"
+    exit 1
+fi
 
 echo -e "\n${CYAN}=========================================================================${NC}"
 echo -e "${GREEN}[+] INSTALLATION COMPLETE!${NC}"
-echo -e "${GREEN}[+] You are now inside the AegisCore secure environment.${NC}"
-echo -e "${WHITE}[+] Type 'aegis --help' to launch the framework.${NC}"
+echo -e "${WHITE}[+] Activate the environment with:${NC}"
+echo -e "${WHITE}      source venv/bin/activate${NC}"
+echo -e "${WHITE}[+] Then run: aegis --help${NC}"
 echo -e "${CYAN}=========================================================================${NC}\n"
-
-# Drop the user into an interactive bash shell with the virtual environment activated
-bash --rcfile venv/bin/activate

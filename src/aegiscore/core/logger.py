@@ -1,12 +1,14 @@
 import logging
-from rich.logging import RichHandler
-from rich.console import Console
-from rich.theme import Theme
-from rich.panel import Panel
-from rich.align import Align
-from rich.text import Text
 
-# Define a professional cyber theme
+from rich.align import Align
+from rich.console import Console
+from rich.logging import RichHandler
+from rich.panel import Panel
+from rich.theme import Theme
+
+from aegiscore import __version__
+
+# Shared Rich theme
 custom_theme = Theme({
     "info": "dim cyan",
     "warning": "magenta",
@@ -18,7 +20,7 @@ custom_theme = Theme({
 console = Console(theme=custom_theme)
 
 def setup_logger(level: int = logging.INFO) -> logging.Logger:
-    """Sets up a professional rich-formatted logger for the application."""
+    """Configure the application logger."""
     logging.basicConfig(
         level=level,
         format="%(message)s",
@@ -30,7 +32,7 @@ def setup_logger(level: int = logging.INFO) -> logging.Logger:
 logger = setup_logger()
 
 def print_banner():
-    """Prints a highly professional AegisCore application banner."""
+    """Print the application banner."""
     banner_text = """
     █████╗ ███████╗ ██████╗ ██╗███████╗ ██████╗ ██████╗ ██████╗ ███████╗
    ██╔══██╗██╔════╝██╔════╝ ██║██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝
@@ -43,8 +45,8 @@ def print_banner():
     panel = Panel(
         Align.center(
             f"[bold cyan]{banner_text}[/bold cyan]\n"
-            "[bold white]ADVANCED CYBERSECURITY FRAMEWORK[/bold white]\n"
-            "[dim]v2.0.0 | Enterprise Edition[/dim]"
+            "[bold white]SECURITY TOOLKIT[/bold white]\n"
+            f"[dim]v{__version__}[/dim]"
         ),
         border_style="cyan",
         padding=(1, 2)
