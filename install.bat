@@ -21,18 +21,8 @@ echo %CYAN%/_/  ^|_\___/\__, /_/____/\____/\____/_/   \___/  %NC%
 echo %CYAN%           /____/                                %NC%
 echo.
 echo %CYAN%=========================================================================%NC%
-echo %WHITE%[*] Initializing AegisCore Boot Sequence...%NC%
+echo %WHITE%[*] Initializing AegisCore installer...%NC%
 echo %CYAN%=========================================================================%NC%
-echo.
-echo %WHITE%[+] Loading kernel modules...%NC%
-timeout /t 1 >nul
-echo %GREEN%    [OK] Modules loaded successfully.%NC%
-echo %WHITE%[+] Bypassing mainframe security restrictions...%NC%
-timeout /t 1 >nul
-echo %GREEN%    [OK] Access Granted.%NC%
-echo %WHITE%[+] Establishing secure encrypted connection...%NC%
-timeout /t 1 >nul
-echo %GREEN%    [OK] Secure.%NC%
 echo.
 
 echo %YELLOW%[*] [1/4] Setting up isolated Python virtual environment...%NC%
@@ -49,15 +39,25 @@ echo %YELLOW%[*] [2/4] Upgrading package manager (pip)...%NC%
 python -m pip install --upgrade pip -q
 
 echo %YELLOW%[*] [3/4] Installing core dependencies...%NC%
-pip install -r requirements.txt -q
+python -m pip install -e ".[all]" -q
+if %errorlevel% neq 0 (
+    echo %RED%[!] Installation failed. Check the output above.%NC%
+    pause
+    exit /b 1
+)
 
-echo %YELLOW%[*] [4/4] Installing AegisCore Toolkit...%NC%
-pip install -e . -q
+echo %YELLOW%[*] [4/4] Verifying installation...%NC%
+aegis --version
+if %errorlevel% neq 0 (
+    echo %RED%[!] The 'aegis' command is not available after install.%NC%
+    pause
+    exit /b 1
+)
 
 echo.
 echo %CYAN%=========================================================================%NC%
 echo %GREEN%[+] INSTALLATION COMPLETE!%NC%
-echo %GREEN%[+] You are now inside the AegisCore secure environment.%NC%
+echo %GREEN%[+] You are now inside the AegisCore environment.%NC%
 echo %WHITE%[+] Type 'aegis --help' to launch the framework.%NC%
 echo %CYAN%=========================================================================%NC%
 
